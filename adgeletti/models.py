@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.sites.models import Site
 from django.conf import settings
+from django.contrib.sites.managers import CurrentSiteManager
 
 class Size(models.Model):
     """Defines an ad size to make available for a Breakpoint.
@@ -20,6 +21,8 @@ class AdUnit(models.Model):
     """
     ad_unit = models.CharField(max_length=255, unique=True, help_text="The ad unit id, without the network ID")
     site = models.ForeignKey(Site)
+
+    for_site = CurrentSiteManager()
 
     @property
     def ad_unit_id(self):

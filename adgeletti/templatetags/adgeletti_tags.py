@@ -44,15 +44,15 @@ class AdNode(template.Node):
         self.slot = slot
         self.breakpoints = breakpoints
 
-    @classmethod
-    def clean_value(cls, value):
+    @staticmethod
+    def clean_value(value):
         """Escapes and cleans a value for use as the value of an attribute in
         the ad's div tag.
         """
         return escape(AdNode._clean.sub(AdNode._replace, value))
 
-    @classmethod
-    def build_div(cls, slot, breakpoint):
+    @staticmethod
+    def build_div(slot, breakpoint):
         """Builds an empty div into which an ad is to be placed.
         """
         slot = AdNode.clean_value(slot)

@@ -102,7 +102,7 @@ class AdBlock(template.Node):
 
         # Get database data
         slots = context[ADS].keys()
-        breakpoints = set(bp for bp in (context[ADS][slot] for slot in context[ADS]))
+        breakpoints = list(set(bp for bp in (context[ADS][slot] for slot in context[ADS])))
         positions = AdPosition.for_site.filter(slot_in=slots, breakpoint_in=breakpoints)
 
         if not slots:

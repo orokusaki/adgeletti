@@ -9,7 +9,7 @@ def build_div(slot, breakpoint):
     """Builds an empty div into which an ad is to be placed.
     """
     # TODO escape div id
-    return '<div class="adgeletti-ad-div" id="%s-%s"></div>' % (slot, breakpoint)
+    return '<div class="adgeletti-ad-div" id="%s-%s" adgeletti-slot="%s" adgeletti-breakpoint="%s"></div>' % (slot, breakpoint, slot, breakpoint)
 
 
 @register.tag(name="ad")

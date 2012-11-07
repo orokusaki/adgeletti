@@ -1,5 +1,4 @@
 from django import template
-from django.conf import settings
 from adgeletti.models import AdPosition
 
 ADS = "_adgeletti_ads"

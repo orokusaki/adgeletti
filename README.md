@@ -49,7 +49,7 @@ Finally, at the bottom of the page, another tag outputs the javascript necessary
     {% adgeletti_init %}
 
 Integration
-===========
+-----------
 
 Integration is simple. Trigger a jquery event called "adgeletti_display", providing the breakpoint you'd like to display ads for.
 

@@ -126,4 +126,3 @@ class AdBlock(template.Node):
         parts.append('</script>')
 
         return "\n".join(parts)
-

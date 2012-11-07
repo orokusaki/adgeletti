@@ -1,16 +1,11 @@
+import re
 from django import template
+from django.utils.html import escape
 from adgeletti.models import AdPosition
 
 ADS = "_adgeletti_ads"
 
 register = template.Library()
-
-def build_div(slot, breakpoint):
-    """Builds an empty div into which an ad is to be placed.
-    """
-    # TODO escape div id
-    return '<div class="adgeletti-ad-div" id="%s-%s" adgeletti-slot="%s" adgeletti-breakpoint="%s"></div>' % (slot, breakpoint, slot, breakpoint)
-
 
 @register.tag(name="ad")
 def parse_ad(parser, token):
@@ -28,11 +23,30 @@ def parse_ad(parser, token):
 
 
 class AdNode(template.Node):
+    _clean = re.compile(r'[^-_a-zA-Z0-9]')
+    _replace = '-'
+
     """Emits a div with a unique id for each ad possible at the tag's location.
     """
     def __init__(self, slot, breakpoints):
         self.slot = slot
         self.breakpoints = breakpoints
+
+    @classmethod
+    def clean_value(klass, value):
+        """Escapes and cleans a value for use as the value of an attribute in
+        the ad's div tag.
+        """
+        return escape(AdNode._clean.sub(AdNode._replace, value))
+
+    @classmethod
+    def build_div(klass, slot, breakpoint):
+        """Builds an empty div into which an ad is to be placed.
+        """
+        slot = AdNode.clean_value(slot)
+        breakpoint = AdNode.clean_value(breakpoint)
+        return '<div class="adgeletti-ad-div" id="%s-%s" adgeletti-slot="%s" adgeletti-breakpoint="%s"></div>' \
+                % (slot, breakpoint, slot, breakpoint)
 
     def render(self, context):
         if ADS not in context:
@@ -42,7 +56,7 @@ class AdNode(template.Node):
             context[ADS][self.slot] = []
 
         context[ADS][self.slot].extend(self.breakpoints)
-        return "\n".join((build_div(self.slot, bp) for bp in self.breakpoints))
+        return "\n".join((AdNode.build_div(self.slot, bp) for bp in self.breakpoints))
 
 
 @register.tag(name="adgeletti_go")
@@ -86,3 +100,4 @@ class AdBlock(template.Node):
         # Output as Javascript
         parts.append('</script>')
         return "\n".join(parts)
+

@@ -13,9 +13,9 @@ Goals
 
 1.  Simplicity (just a few quick additions to your `settings.py` module, including adding `adgeletti` to your `INSTALLED_APPS`)
 2.  Efficiency (minimal queries)
-3.  Ease of integration with existing templates (2 template tags, nothing else)
-4.  Designed for responsive sites (define breakpoints for ad display)
-5.  Separation of ad scheduling and management from display (ads are managed in Google's DFP interface)
+3.  Ease of integration with existing templates (use two template tags and call a provided JavaScript method)
+4.  Designed for responsive sites (define arbitrary breakpoints for ad display)
+5.  Separation of ad scheduling and management from display (your ads are managed in Google's DFP admin interface)
 
 Usage
 -----

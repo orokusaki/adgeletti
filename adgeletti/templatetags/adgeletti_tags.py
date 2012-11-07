@@ -1,12 +1,16 @@
 import re
+
 from django import template
 from django.utils.html import escape
+from django.contrib.sites.models import Site
+
 from adgeletti.models import AdPosition
+
+
+register = template.Library()
 
 ADS = '_adgeletti_ads'
 FIRED = '_adgeletti_fired'
-
-register = template.Library()
 
 
 def error(text):
@@ -41,14 +45,14 @@ class AdNode(template.Node):
         self.breakpoints = breakpoints
 
     @classmethod
-    def clean_value(klass, value):
+    def clean_value(cls, value):
         """Escapes and cleans a value for use as the value of an attribute in
         the ad's div tag.
         """
         return escape(AdNode._clean.sub(AdNode._replace, value))
 
     @classmethod
-    def build_div(klass, slot, breakpoint):
+    def build_div(cls, slot, breakpoint):
         """Builds an empty div into which an ad is to be placed.
         """
         slot = AdNode.clean_value(slot)
@@ -80,20 +84,20 @@ def parse_adgeletti_go(parser, token):
 
 
 class AdBlock(template.Node):
-    """Emits a Javascript lookup table assigned to Adgeletti.ad_data. The table
-    stores the following information about ads registered to the page by the ad
-    tag:
+    """
+    Emits a <script type="text/javascript"> tag with code similar to the
+    following example, as a means to define an ad position.
 
-        Adgeletti[ad_data][BREAKPOINT][SLOT] = { ad_unit_id: '???', sizes: [[?,?], [?,?], ...] }
+        Adgeletti.position("Mobile", "AD-UNIT-ID-1", "DIV-ID-1", [[320,50]]);
 
     ...where sizes is an array of [width, height] pairs (arrays).
     """
     def render(self, context):
         if ADS not in context or FIRED not in context:
-            return ''
+            return u''
 
         if context[FIRED]:
-            return error('adgeletti_go has already been fired!')
+            return error(u'adgeletti_go has already been fired!')
         else:
             context[FIRED] = True
 
@@ -102,27 +106,51 @@ class AdBlock(template.Node):
 
         # Get database data
         slots = context[ADS].keys()
-        breakpoints = list(set(bp for bp in (context[ADS][slot] for slot in context[ADS])))
-        positions = AdPosition.for_site.filter(slot_in=slots, breakpoint_in=breakpoints)
+        breakpoints = list(
+            set(bp for bp in (context[ADS][slot] for slot in context[ADS])))
+        positions = AdPosition.objects.filter(
+            ad_unit__site=Site.objects.get_current(), slot__in=slots,
+            breakpoint__in=breakpoints)
 
         # Check for obvious errors
         if not slots:
-            parts.append(error('No ads have been placed on the page.'))
+            parts.append(
+                error(u'No ads have been placed on the page.'))
 
         if slots and not positions:
-            parts.append(error('No AdPositions have been added to the database.'))
+            parts.append(
+                error(u'No AdPositions have been added to the database.'))
 
         # Always output script and base data structure
-        parts.append('<script type="text/javascript">')
-        parts.append('var Adgeletti = {ad_data: {}};');
+        parts.append(u'<script type="text/javascript">')
+
+        # Template for ad definition
+        POSITION_TPL = u'Adgeletti.position("{b}", "{a}", {s}, "{d}");'
 
         if positions:
             # Build lookup table
             for pos in positions:
-                sizes = '[%s]' % ','.join(['[%d,%d]' % (s.width, s.height) for s in pos.sizes])
-                parts.append('Adgeletti.ad_data[%s][%s] = {ad_unit_id: "%s", sizes: [%s]};'
-                        % (pos.breakpoint, pos.slot, pos.ad_unit.ad_unit_id, sizes))
+                sizes = u'[%s]' % ','.join(
+                    ['[%d,%d]' % (s.width, s.height) for s in pos.sizes])
+                parts.append(
+                    POSITION_TPL.format(
+                        b=pos.breakpoint, a=pos.ad_unit.ad_unit_id, s=sizes,
+                        d=pos.div_id))
 
-        parts.append('</script>')
 
-        return "\n".join(parts)
+                        # TODO: Address this tomorrow when I have to chance to
+                        # chat with Jeff about ``pos.div_id`` being added, and
+                        # pos being a dict that is generated higher up than in
+                        # this method, and passed into the context for grabbing
+                        # here - ``POSS[BREAKPOINT] = [slot, ...]`` needs to be
+                        # the case as well for this to happen... too tired, too
+                        # noisy at SBUX, gotta head out :( (also double check
+                        # that `size` for `pubads().display(...)` can indeed
+                        # be a list of sizes, vs a single size... why the hell
+                        # do they document its syntax in a way that implies
+                        # `size` is a single value?)
+
+
+        parts.append(u'</script>')
+
+        return u'\n'.join(parts)

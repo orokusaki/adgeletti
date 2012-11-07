@@ -105,12 +105,14 @@ class AdBlock(template.Node):
         breakpoints = list(set(bp for bp in (context[ADS][slot] for slot in context[ADS])))
         positions = AdPosition.for_site.filter(slot_in=slots, breakpoint_in=breakpoints)
 
+        # Check for obvious errors
         if not slots:
             parts.append(error('No ads have been placed on the page.'))
 
         if slots and not positions:
             parts.append(error('No AdPositions have been added to the database.'))
 
+        # Always output script and base data structure
         parts.append('<script type="text/javascript">')
         parts.append('var Adgeletti = {ad_data: {}};');
 

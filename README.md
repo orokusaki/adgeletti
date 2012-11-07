@@ -23,8 +23,8 @@ Usage
 1.  Define the ad slots that your website's templates will use, in `settings.py` (e.g., `ADGELETTI_SLOTS = (u'AD-01', u'AD-02',)`)
 2.  Define the breakpoints that your website's templates will use, in `settings.py` (e.g., `ADGELETTI_BREAKPOINTS = (u'Mobile', u'Tablet', u'Wired',)`)
 3.  Use the `{% ad...` tag to tell Adgeletti where in your page to display the ads (example below)
-4.  Create an `AdUnit` objects via the admin.
-5.  Create an `AdPosition` for the `AdUnit`.
+4.  Create an `AdUnit` via the admin.
+5.  Create an `AdPosition` for the `AdUnit` that you just created. You'll have to select a breakpoint, an ad slot and the allowed ad sizes for this position, as well.
 
 The following examples will work fine with the steps above, after you load the Adgeletti template tags, like a boss.
 

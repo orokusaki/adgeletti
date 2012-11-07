@@ -36,7 +36,7 @@ To display the ad defined above:
 
 If the same ad unit should display in the same location for two different break points:
 
-    {% ad AD-01 Mobile, Tablet %}
+    {% ad AD-01 Mobile Tablet %}
 
 If the same ad unit should display in two different locations for two different break points:
 
@@ -57,9 +57,7 @@ Example
 -------
 
     // The following would cause any ads in the page with a "Mobile" breakpoint
-    // to be shown, if the element with the `id="show_mobile_ads"` was clicked.
+    // to be displayed.
     // IRL, you'll probably trigger this event from within a control wherein
     // your code is detecting that the page is sized to fit a mobile device.
-    $('#show_mobile_ads').click(function(e){
-        $('body').trigger('adgeletti_display', 'Mobile');
-    });
+    $('body').trigger('adgeletti_display', 'Mobile');

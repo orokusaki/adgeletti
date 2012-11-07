@@ -33,15 +33,22 @@ class Size:
         return '%dpx x %dpx' % (self.width, self.height)
 
 
-class AdUnit(models.Model):
+class AdUnit:
+    size = models.ForeignKey(Size)
+    ad_unit_id = models.CharField(max_length=255)
+
+    class Meta:
+        unique_together = ('size', 'ad_unit_id')
+
+
+class Ad(models.Model):
     """Selects the size of ad that displays in a Slot at a particular
     Breakpoint.
     """
     sites = models.ManyToManyField(Site)
     slot = models.ForeignKey(Slot)
     breakpoint = models.ForeignKey(Breakpoint)
-    size = models.ForeignKey(Size)
-    ad_unit_id = models.CharField(max_length=255)
+    ad_unit = models.ForeignKey(AdUnit)
 
     objects = CurrentSiteManager()
     all_sites = models.Manager()

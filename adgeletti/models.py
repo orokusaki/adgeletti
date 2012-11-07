@@ -20,17 +20,17 @@ class AdUnit(models.Model):
     """Represents an ad unit and a configured size that it can support.
     """
     ad_unit_id = models.CharField(max_length=255, unique=True)
-    sizes = models.ManyToManyField(Size)
     site = models.ForeignKeyField(Site)
 
     objects = CurrentSiteManager()
 
 
-class Ad(models.Model):
+class AdPosition(models.Model):
     """Selects the AdUnit to display in a Slot at a particular Breakpoint.
     """
     slot = models.CharField(max_length=50, choices=settings.ADGELETTI_SLOTS)
     breakpoint = models.CharField(max_length=50, choices=settings.ADGETLETTI_BREAKPOINTS)
+    sizes = models.ManyToManyField(Size)
     ad_unit = models.ForeignKey(AdUnit)
 
     class Meta:

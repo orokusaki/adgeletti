@@ -61,14 +61,11 @@ class AdNode(template.Node):
         return "%s-%s" % (slot, breakpoint)
 
     @staticmethod
-    def build_div(div_id, slot, breakpoint):
+    def build_div(div_id):
         """Builds an empty div into which an ad is to be placed.
         """
         div_id = AdNode.clean_value(div_id)
-        slot = AdNode.clean_value(slot)
-        breakpoint = AdNode.clean_value(breakpoint)
-        return '<div class="adgeletti-ad-div" id="%s" adgeletti-slot="%s" adgeletti-breakpoint="%s"></div>' \
-            % (div_id, slot, breakpoint)
+        return '<div class="adgeletti-ad-div" id="%s" style="display:none"></div>\n' % div_id
 
     def render(self, context):
         if FIRED in context and context[FIRED]:
@@ -95,7 +92,6 @@ class AdNode(template.Node):
             if breakpoint not in context[ADS][self.slot]:
                 context[ADS][self.slot][breakpoint] = div_id
                 buf.write(div)
-                buf.write('\n')
 
         content = buf.getvalue()
         buf.close()

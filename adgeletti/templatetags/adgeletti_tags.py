@@ -67,8 +67,7 @@ class AdNode(template.Node):
         div_id = AdNode.clean_value(div_id)
         slot = AdNode.clean_value(slot)
         breakpoint = AdNode.clean_value(breakpoint)
-        return '<div class="adgeletti-ad-div" id="%s" adgeletti-slot="%s" adgeletti-breakpoint="%s"></div>\n' \
-            % (div_id, slot, breakpoint)
+        return '<div class="adgeletti-ad-div" id="%s" style="display:none"></div>\n' % div_id
 
     def render(self, context):
         if FIRED in context and context[FIRED]:

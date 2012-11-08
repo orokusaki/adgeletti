@@ -156,7 +156,7 @@ class AdBlock(template.Node):
                 breakpoint = pos.breakpoint
                 ad_unit_id = pos.slot.ad_unit_id
                 div_id = context[ADS][slot][breakpoint]
-                sizes = '[' + ','.join(['[%d,%d]' % (s.width, s.height) for s in pos.sizes]) + ']'
+                sizes = u'[%s]' % (u','.join([u'[%d,%d]' % (s.width, s.height) for s in pos.sizes]))
 
                 buf.write(
                     AdBlock.POSITION_TPL.format(
@@ -174,4 +174,3 @@ class AdBlock(template.Node):
         buf.close()
 
         return content
-

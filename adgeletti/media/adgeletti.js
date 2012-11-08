@@ -1,3 +1,7 @@
+/*
+ * @requires GPT library (e.g., //www.googletagservices.com/tag/js/gpt.js)
+ */
+
 // Set up a simple console noop for clients without a console
 window.console = window.console || {log: function(m){}, error: function(m){}};
 

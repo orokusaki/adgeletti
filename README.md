@@ -11,20 +11,19 @@ Adgeletti is a django app that facilitates an easy integration with [DoubleClick
 Goals
 -----
 
-1.  Simplicity (just a few quick additions to your `settings.py` module, including adding `adgeletti` to your `INSTALLED_APPS`)
-2.  Efficiency (minimal queries)
-3.  Ease of integration with existing templates (use two template tags and call a provided JavaScript method)
-4.  Designed for responsive sites (define arbitrary breakpoints for ad display)
-5.  Separation of ad scheduling and management from display (your ads are managed in Google's DFP admin interface)
+1.  Simplicity
+2.  Efficiency
+3.  Ease of integration with existing templates
+4.  Designed for responsive sites (works fine with non-responsive sites as well)
+5.  Separation of ad scheduling, etc. from ad display
 
 Usage
 -----
 
-1.  Define the ad slots that your website's templates will use, in `settings.py` (e.g., `ADGELETTI_SLOTS = (u'AD-01', u'AD-02',)`)
-2.  Define the breakpoints that your website's templates will use, in `settings.py` (e.g., `ADGELETTI_BREAKPOINTS = (u'Mobile', u'Tablet', u'Wired',)`)
-3.  Use the `{% ad...` tag to tell Adgeletti where in your page to display the ads (example below)
-4.  Create an `AdUnit` via the admin.
-5.  Create an `AdPosition` for the `AdUnit` that you just created. You'll have to select a breakpoint, an ad slot and the allowed ad sizes for this position, as well.
+1.  Define the breakpoints that your website's templates will use, in `settings.py` (e.g., `ADGELETTI_BREAKPOINTS = (u'Mobile', u'Tablet', u'768px', ...)`).
+2.  Define an `AdSlot` via the admin, providing a label (slot name), and an ad unit ID.
+3.  Create an `AdPosition` for your `AdUnit`, selecting a breakpoint and the sizes of ads allowed.
+4.  Use the `{% ad...` template tag to tell Adgeletti where in your page to display the ad.
 
 The following examples will work fine with the steps above, after you load the Adgeletti template tags, like a boss.
 
@@ -51,13 +50,18 @@ Finally, at the bottom of the page, another tag outputs the javascript necessary
 Integration
 -----------
 
-Integration is simple. Trigger a jquery event called "adgeletti_display", providing the breakpoint you'd like to display ads for.
+Integration is simple. Trigger a jQuery event called "adgeletti_display", providing the breakpoint you'd like to display ads for.
 
 Example
 -------
 
     // The following would cause any ads in the page with a "Mobile" breakpoint
-    // to be displayed.
-    // IRL, you'll probably trigger this event from within a control wherein
-    // your code is detecting that the page is sized to fit a mobile device.
-    $('body').trigger('adgeletti_display', 'Mobile');
+    // to be displayed. This should be done after or within the document ready
+    // event, to ensure the lucky charms are in order before you display an ad.
+    Adgeletti.display('Mobile');
+
+Dependencies
+------------
+
+Django 1.3
+The Google GPT script (e.g. //www.googletagservices.com/tag/js/gpt.js)

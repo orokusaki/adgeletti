@@ -67,7 +67,7 @@ class AdNode(template.Node):
         div_id = AdNode.clean_value(div_id)
         slot = AdNode.clean_value(slot)
         breakpoint = AdNode.clean_value(breakpoint)
-        return '<div class="adgeletti-ad-div" id="%s" adgeletti-slot="%s" adgeletti-breakpoint="%s"></div>' \
+        return '<div class="adgeletti-ad-div" id="%s" adgeletti-slot="%s" adgeletti-breakpoint="%s"></div>\n' \
             % (div_id, slot, breakpoint)
 
     def render(self, context):
@@ -95,7 +95,6 @@ class AdNode(template.Node):
             if breakpoint not in context[ADS][self.slot]:
                 context[ADS][self.slot][breakpoint] = div_id
                 buf.write(div)
-                buf.write('\n')
 
         content = buf.getvalue()
         buf.close()

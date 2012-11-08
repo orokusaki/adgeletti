@@ -18,7 +18,7 @@ BREAKPOINTS = '_adgeletti_breakpoints'
 def error(text):
     """Formats error text as an (escaped) HTML comment.
     """
-    return '<!-- %s -->' % escape(text)
+    return '<!-- %s -->\n' % escape(text)
 
 
 @register.tag(name="ad")
@@ -99,6 +99,7 @@ class AdNode(template.Node):
 
         content = buf.getvalue()
         buf.close()
+
         return content
 
 
@@ -144,10 +145,10 @@ class AdBlock(template.Node):
 
         # Check for obvious errors
         if not slots:
-            buf.write(error(u'No ads have been placed on the page.\n'))
+            buf.write(error(u'No ads have been placed on the page.'))
 
         if slots and not positions:
-            buf.write(error(u'No AdPositions have been added to the database.\n'))
+            buf.write(error(u'No AdPositions have been added to the database.'))
 
         # Always output script and base data structure
         buf.write(u'<script type="text/javascript">\n')
@@ -166,10 +167,12 @@ class AdBlock(template.Node):
                         d=div_id,
                     )
                 )
+
                 buf.write('\n')
 
         buf.write(u'</script>\n')
         content = buf.getvalue()
         buf.close()
+
         return content
 

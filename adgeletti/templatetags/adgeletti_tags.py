@@ -92,6 +92,9 @@ class AdBlock(template.Node):
 
     ...where sizes is an array of [width, height] pairs (arrays).
     """
+    # Template for ad definition
+    POSITION_TPL = u'Adgeletti.position("{b}", "{a}", {s}, "{d}");'
+
     def render(self, context):
         if ADS not in context or FIRED not in context:
             return u''
@@ -106,51 +109,48 @@ class AdBlock(template.Node):
 
         # Get database data
         slots = context[ADS].keys()
-        breakpoints = list(
-            set(bp for bp in (context[ADS][slot] for slot in context[ADS])))
+        breakpoints = list(set(bp for bp in (context[ADS][slot] for slot in context[ADS])))
         positions = AdPosition.objects.filter(
-            ad_unit__site=Site.objects.get_current(), slot__in=slots,
-            breakpoint__in=breakpoints)
+            ad_unit__site=Site.objects.get_current(),
+            slot__in=slots,
+            breakpoint__in=breakpoints
+        )
 
         # Check for obvious errors
         if not slots:
-            parts.append(
-                error(u'No ads have been placed on the page.'))
+            parts.append(error(u'No ads have been placed on the page.'))
 
         if slots and not positions:
-            parts.append(
-                error(u'No AdPositions have been added to the database.'))
+            parts.append(error(u'No AdPositions have been added to the database.'))
 
         # Always output script and base data structure
         parts.append(u'<script type="text/javascript">')
 
-        # Template for ad definition
-        POSITION_TPL = u'Adgeletti.position("{b}", "{a}", {s}, "{d}");'
-
         if positions:
             # Build lookup table
             for pos in positions:
-                sizes = u'[%s]' % ','.join(
-                    ['[%d,%d]' % (s.width, s.height) for s in pos.sizes])
+                sizes = u'[%s]' % ','.join(['[%d,%d]' % (s.width, s.height) for s in pos.sizes])
                 parts.append(
-                    POSITION_TPL.format(
-                        b=pos.breakpoint, a=pos.ad_unit.ad_unit_id, s=sizes,
-                        d=pos.div_id))
+                    AdBlock.POSITION_TPL.format(
+                        b=pos.breakpoint,
+                        a=pos.ad_unit.ad_unit_id,
+                        s=sizes,
+                        d=pos.div_id
+                    )
+                )
 
 
-                        # TODO: Address this tomorrow when I have to chance to
-                        # chat with Jeff about ``pos.div_id`` being added, and
-                        # pos being a dict that is generated higher up than in
-                        # this method, and passed into the context for grabbing
-                        # here - ``POSS[BREAKPOINT] = [slot, ...]`` needs to be
-                        # the case as well for this to happen... too tired, too
-                        # noisy at SBUX, gotta head out :( (also double check
-                        # that `size` for `pubads().display(...)` can indeed
-                        # be a list of sizes, vs a single size... why the hell
-                        # do they document its syntax in a way that implies
-                        # `size` is a single value?)
-
+                # TODO: Address this tomorrow when I have to chance to
+                # chat with Jeff about ``pos.div_id`` being added, and
+                # pos being a dict that is generated higher up than in
+                # this method, and passed into the context for grabbing
+                # here - ``POSS[BREAKPOINT] = [slot, ...]`` needs to be
+                # the case as well for this to happen... too tired, too
+                # noisy at SBUX, gotta head out :( (also double check
+                # that `size` for `pubads().display(...)` can indeed
+                # be a list of sizes, vs a single size... why the hell
+                # do they document its syntax in a way that implies
+                # `size` is a single value?)
 
         parts.append(u'</script>')
-
         return u'\n'.join(parts)

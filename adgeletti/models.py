@@ -18,14 +18,18 @@ class Size(models.Model):
         return _(u'%dpx x %dpx') % (self.width, self.height)
 
 
-class AdUnit(models.Model):
-    """An ad for the selected ``Site``.
+class AdSlot(models.Model):
+    """An individual slot configuration for a site.
     """
-    label = models.CharField(_(u'Label'), max_length=50, unique=True, help_text=_(u'A helpful label for this ad unit.'))
-    ad_unit = models.CharField(_(u'Ad unit ID'), max_length=255, unique=True, help_text=_(u'The ad unit ID, without the network ID'))
+    label = models.CharField(_(u'Label'), max_length=25, help_text=_(u'Identifier for slot to be used on the page.'))
+    site = models.ForeignKey(Site, verbose_name=_(u'site'))
+    ad_unit = models.CharField(_(u'Ad unit ID'), max_length=255, help_text=_(u'The ad unit ID, without the network ID.'))
+
+    class Meta:
+        unique_together = ('label', 'site')
 
     def __unicode__(self):
-        return self.label
+        return _(u'%s (%s)' % (self.label, self.site))
 
     @property
     def ad_unit_id(self):
@@ -33,15 +37,12 @@ class AdUnit(models.Model):
 
 
 class AdPosition(models.Model):
-    """An ad unit for display at the selected sizes, for the selected breakpoint
-    in the selected slot.
+    """Configures how a slot is to be displayed for a given breakpoint.
     """
-    ad_unit = models.ForeignKey(AdUnit, verbose=_(u'ad unit'))
-    slot = models.CharField(_(u'slot'), max_length=255, choices=[(slot, slot) for slot in settings.ADGELETTI_SLOTS])
-    breakpoint = models.CharField(_(u'breakpoint'), max_length=255, choices=[(bp, bp) for bp in settings.ADGELETTI_BREAKPOINTS])
+    slot = models.ForeignKey('adgeletti.AdSlot')
+    breakpoint = models.CharField(_(u'breakpoint'), max_length=25, choices=[(bp, bp) for bp in settings.ADGELETTI_BREAKPOINTS])
     sizes = models.ManyToManyField(Size, verbose_name=_(u'allowed sizes'))
-    site = models.ForeignKey(Site, verbose_name=_(u'site'))
 
     class Meta:
-        unique_together = ('ad_unit', 'slot', 'breakpoint', 'site')
+        unique_together = ('slot', 'breakpoint')
 

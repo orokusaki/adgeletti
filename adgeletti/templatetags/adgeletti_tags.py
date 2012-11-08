@@ -134,8 +134,8 @@ class AdBlock(template.Node):
         slots = context[ADS].keys()
         breakpoints = context[BREAKPOINTS]
         positions = AdPosition.objects.filter(
-            ad_unit__site=Site.objects.get_current(),
-            slot__in=slots,
+            slot__site=Site.objects.get_current(),
+            slot__label__in=slots,
             breakpoint__in=breakpoints,
         )
 
@@ -152,13 +152,16 @@ class AdBlock(template.Node):
         # Output nothing if no positions found at all
         if positions:
             for pos in positions:
-                div_id = context[ADS][pos.slot][pos.breakpoint]
+                slot = pos.slot.label
+                breakpoint = pos.breakpoint
+                ad_unit_id = pos.slot.ad_unit_id
+                div_id = context[ADS][slot][breakpoint]
                 sizes = '[' + ','.join(['[%d,%d]' % (s.width, s.height) for s in pos.sizes]) + ']'
 
                 buf.write(
                     AdBlock.POSITION_TPL.format(
-                        b=pos.breakpoint,
-                        a=pos.ad_unit.ad_unit_id,
+                        b=breakpoint,
+                        a=ad_unit_id,
                         s=sizes,
                         d=div_id,
                     )

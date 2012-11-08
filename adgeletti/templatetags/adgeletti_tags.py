@@ -21,7 +21,7 @@ def error(text):
     return '<!-- %s -->\n' % escape(text)
 
 
-@register.tag(name="ad")
+@register.tag(name='ad')
 def parse_ad(parser, token):
     """Parser for ad tag. Usage:
         {% ad SLOT BREAKPOINT [BREAKPOINT ...] %}
@@ -149,25 +149,25 @@ class AdBlock(template.Node):
         # Always output script and base data structure
         buf.write(u'<script type="text/javascript">\n')
 
-        # Output nothing if no positions found at all
-        if positions:
-            for pos in positions:
-                slot = pos.slot.label
-                breakpoint = pos.breakpoint
-                ad_unit_id = pos.slot.ad_unit_id
-                div_id = context[ADS][slot][breakpoint]
-                sizes = u'[%s]' % (u','.join([u'[%d,%d]' % (s.width, s.height) for s in pos.sizes]))
+        # Loop through each ``AdPosition`` and emit an `Adgeletti.position`
+        # call for each
+        for pos in positions:
+            slot = pos.slot.label
+            breakpoint = pos.breakpoint
+            ad_unit_id = pos.slot.ad_unit_id
+            div_id = context[ADS][slot][breakpoint]
+            sizes = u'[%s]' % (u','.join([u'[%d,%d]' % (s.width, s.height) for s in pos.sizes]))
 
-                buf.write(
-                    AdBlock.POSITION_TPL.format(
-                        b=breakpoint,
-                        a=ad_unit_id,
-                        s=sizes,
-                        d=div_id,
-                    )
+            buf.write(
+                AdBlock.POSITION_TPL.format(
+                    b=breakpoint,
+                    a=ad_unit_id,
+                    s=sizes,
+                    d=div_id,
                 )
+            )
 
-                buf.write('\n')
+            buf.write(u'\n')
 
         buf.write(u'</script>\n')
         content = buf.getvalue()

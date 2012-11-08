@@ -34,6 +34,9 @@ window.Adgeletti = {
 
 		for(var i = 0; i < num_positions; ++i){
 			var pos = positions[i];
+			// Show the div
+			document.getElementById(pos.div_id).style.display = 'block';
+			// Tell Google to display the ad
 			googletag.pubads().display(pos.ad_unit_id, pos.sizes, pos.div_id);
 		}
 	}

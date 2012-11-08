@@ -61,12 +61,10 @@ class AdNode(template.Node):
         return "%s-%s" % (slot, breakpoint)
 
     @staticmethod
-    def build_div(div_id, slot, breakpoint):
+    def build_div(div_id):
         """Builds an empty div into which an ad is to be placed.
         """
         div_id = AdNode.clean_value(div_id)
-        slot = AdNode.clean_value(slot)
-        breakpoint = AdNode.clean_value(breakpoint)
         return '<div class="adgeletti-ad-div" id="%s" style="display:none"></div>\n' % div_id
 
     def render(self, context):

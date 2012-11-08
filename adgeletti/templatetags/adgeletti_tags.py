@@ -1,5 +1,5 @@
 import re
-import cStringIO as StringIO
+import cStringIO
 
 from django import template
 from django.contrib.sites.models import Site
@@ -82,7 +82,7 @@ class AdNode(template.Node):
         if self.slot not in context[ADS]:
             context[ADS][self.slot] = {}
 
-        buf = StringIO.StringIO()
+        buf = cStringIO.StringIO()
 
         for breakpoint in self.breakpoints:
             div_id = AdNode.div_id(self.slot, breakpoint)
@@ -131,7 +131,7 @@ class AdBlock(template.Node):
             context[FIRED] = True
 
         # Start building output
-        buf = StringIO.StringIO()
+        buf = cStringIO.StringIO()
 
         # Get database data
         slots = context[ADS].keys()

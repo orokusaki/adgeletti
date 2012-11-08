@@ -63,5 +63,5 @@ Example
 Dependencies
 ------------
 
-Django 1.3
-The Google GPT script (e.g. //www.googletagservices.com/tag/js/gpt.js)
+1.  Django 1.3
+2.  The Google GPT script (e.g. //www.googletagservices.com/tag/js/gpt.js)

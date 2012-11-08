@@ -50,10 +50,7 @@ Finally, at the bottom of the page, another tag outputs the javascript necessary
 Integration
 -----------
 
-Integration is simple. Trigger a jQuery event called "adgeletti_display", providing the breakpoint you'd like to display ads for.
-
-Example
--------
+Integration is simple. Call the `Adgeletti.display` function, providing the breakpoint you'd like to display ads for.
 
     // The following would cause any ads in the page with a "Mobile" breakpoint
     // to be displayed. This should be done after or within the document ready

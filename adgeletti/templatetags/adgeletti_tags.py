@@ -134,7 +134,7 @@ class AdBlock(template.Node):
         slots = context[ADS].keys()
         breakpoints = context[BREAKPOINTS]
         positions = AdPosition.objects.filter(
-            slot__ad_unit__site=Site.objects.get_current(),
+            slot__site=Site.objects.get_current(),
             slot__label__in=slots,
             breakpoint__in=breakpoints,
         )
@@ -155,7 +155,6 @@ class AdBlock(template.Node):
                 slot = pos.slot.label
                 breakpoint = pos.breakpoint
                 ad_unit_id = pos.slot.ad_unit_id
-
                 div_id = context[ADS][slot][breakpoint]
                 sizes = '[' + ','.join(['[%d,%d]' % (s.width, s.height) for s in pos.sizes]) + ']'
 

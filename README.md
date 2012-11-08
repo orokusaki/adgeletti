@@ -53,8 +53,9 @@ Integration
 Integration is simple. Call the `Adgeletti.display` function, providing the breakpoint you'd like to display ads for.
 
     // The following would cause any ads in the page with a "Mobile" breakpoint
-    // to be displayed. This should be done after or within the document ready
-    // event, to ensure the lucky charms are in order before you display an ad.
+    // to be displayed. This should be done within a document ready handler, or
+    // some time after the document ready event has occurred, to ensure the
+    // lucky charms are in order before an ad is displayed.
     Adgeletti.display('Mobile');
 
 Dependencies

@@ -25,14 +25,13 @@ window.Adgeletti = {
 	display: function(breakpoint){
 		console.log('Displaying ads for breakpoint "' + breakpoint + '"');
 		var positions = this.data.breakpoint || [];
-        var num_positions = positions.length;
 
-		if(num_positions == 0){  // Johnny 5
+		if(positions.length == 0){  // Johnny 5
 			console.log('No ads for breakpoint "' + breakpoint + '"');
 			return;
 		}
 
-		for(var i = 0; i < num_positions; ++i){
+		for(var i = 0; i < positions.length; ++i){
 			var pos = positions[i];
 			// Show the div
 			document.getElementById(pos.div_id).style.display = 'block';

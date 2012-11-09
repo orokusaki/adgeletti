@@ -39,7 +39,7 @@ class AdSlot(models.Model):
 class AdPosition(models.Model):
     """Configures how a slot is to be displayed for a given breakpoint.
     """
-    slot = models.ForeignKey('adgeletti.AdSlot')
+    slot = models.ForeignKey('adgeletti.AdSlot', verbose_name=_(u'slot'))
     breakpoint = models.CharField(_(u'breakpoint'), max_length=25, choices=[(bp, bp) for bp in settings.ADGELETTI_BREAKPOINTS])
     sizes = models.ManyToManyField(Size, verbose_name=_(u'allowed sizes'))
 

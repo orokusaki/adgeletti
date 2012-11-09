@@ -62,4 +62,5 @@ Dependencies
 ------------
 
 1.  Django 1.3
-2.  The Google GPT script (e.g. //www.googletagservices.com/tag/js/gpt.js)
+2.  `contrib.sites`
+3.  The Google GPT script (e.g. //www.googletagservices.com/tag/js/gpt.js)

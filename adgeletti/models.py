@@ -29,7 +29,7 @@ class AdSlot(models.Model):
         unique_together = ('label', 'site')
 
     def __unicode__(self):
-        return _(u'%s (%s)' % (self.label, self.site))
+        return _(u'%s (%s)') % (self.label, self.site)
 
     @property
     def ad_unit_id(self):
@@ -45,4 +45,3 @@ class AdPosition(models.Model):
 
     class Meta:
         unique_together = ('slot', 'breakpoint')
-

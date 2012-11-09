@@ -22,7 +22,7 @@ window.Adgeletti = {
 	// Displays all ads in the page for the given breakpoint
 	display: function(breakpoint){
 		console.log('Displaying ads for breakpoint "' + breakpoint + '"');
-		var positions = this.data.breakpoint || [];
+		var positions = this.data[breakpoint] || [];
 
 		if(positions.length == 0){  // Johnny 5
 			console.log('No ads for breakpoint "' + breakpoint + '"');

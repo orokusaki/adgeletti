@@ -28,11 +28,11 @@ def parse_ad(parser, token):
     """
     args = token.split_contents()
 
-    if len(args) < 2:
-        raise template.TemplateSyntaxError("usage: {% ad SLOT BREAKPOINT [BREAKPOINT ...] %}")
+    if len(args) < 3:
+        raise template.TemplateSyntaxError(u'usage: {% ad SLOT BREAKPOINT [BREAKPOINT ...] %}')
 
-    slot = args[0]
-    breakpoints = args[1:]
+    slot = args[1]
+    breakpoints = args[2:]
     return AdNode(slot, breakpoints)
 
 
@@ -40,7 +40,7 @@ class AdNode(template.Node):
     """Emits a div with a unique id for each ad possible at the tag's location.
     """
     _clean = re.compile(r'[^-_a-zA-Z0-9]')
-    _replace = '-'
+    _replace = u'-'
 
     def __init__(self, slot, breakpoints):
         self.slot = slot
@@ -58,7 +58,7 @@ class AdNode(template.Node):
         """Returns a string (unescaped) that may be used as the id attribute for
         an ad's div.
         """
-        return "%s-%s" % (slot, breakpoint)
+        return u'adgeletti-ad-div-%s-%s' % (slot, breakpoint)
 
     @staticmethod
     def build_div(div_id):
@@ -68,29 +68,29 @@ class AdNode(template.Node):
         return '<div class="adgeletti-ad-div" id="%s" style="display:none"></div>\n' % div_id
 
     def render(self, context):
-        if FIRED in context and context[FIRED]:
-            return error(u'`adgeletti_go` has already been fired.')
+        if context.render_context.get(FIRED, False):
+            return error(u'{% ad ... %} used after {% adgeletti_go %} used')
 
-        if ADS not in context:
-            context[ADS] = {}
-            context[FIRED] = False
-            context[BREAKPOINTS] = set([])
+        if ADS not in context.render_context:
+            context.render_context[ADS] = {}
+            context.render_context[FIRED] = False
+            context.render_context[BREAKPOINTS] = set([])
 
-        if self.slot not in context[ADS]:
-            context[ADS][self.slot] = {}
+        if self.slot not in context.render_context[ADS]:
+            context.render_context[ADS][self.slot] = {}
 
         buf = cStringIO.StringIO()
 
         for breakpoint in self.breakpoints:
             div_id = AdNode.div_id(self.slot, breakpoint)
-            div = AdNode.build_div(div_id, self.slot, breakpoint)
+            div = AdNode.build_div(div_id)
 
             # Add breakpoint to global set
-            context[BREAKPOINTS].add(breakpoint)
+            context.render_context[BREAKPOINTS].add(breakpoint)
 
             # Add to context and output
-            if breakpoint not in context[ADS][self.slot]:
-                context[ADS][self.slot][breakpoint] = div_id
+            if breakpoint not in context.render_context[ADS][self.slot]:
+                context.render_context[ADS][self.slot][breakpoint] = div_id
                 buf.write(div)
 
         content = buf.getvalue()
@@ -119,32 +119,28 @@ class AdBlock(template.Node):
     POSITION_TPL = u'Adgeletti.position("{b}", "{a}", {s}, "{d}");'
 
     def render(self, context):
-        if ADS not in context or FIRED not in context:
-            return u''
+        if ADS not in context.render_context or FIRED not in context.render_context:
+            return error(u'{% adgeletti_go %} was run without an {% ad ... %}')
 
-        if context[FIRED]:
-            return error(u'`adgeletti_go` has already been fired.')
+        if context.render_context[FIRED]:
+            return error(u'{% adgeletti_go %} already used, but used again')
         else:
-            context[FIRED] = True
+            context.render_context[FIRED] = True
 
         # Start building output
         buf = cStringIO.StringIO()
 
         # Get database data
-        slots = context[ADS].keys()
-        breakpoints = context[BREAKPOINTS]
+        slots = context.render_context[ADS].keys()
+        breakpoints = context.render_context[BREAKPOINTS]
         positions = AdPosition.objects.filter(
             slot__site=Site.objects.get_current(),
             slot__label__in=slots,
             breakpoint__in=breakpoints,
         )
 
-        # Check for obvious errors
-        if not slots:
-            buf.write(error(u'No ads have been placed on the page.'))
-
         if slots and not positions:
-            buf.write(error(u'No AdPositions have been added to the database.'))
+            buf.write(error(u'No ad positions exist for the slots in the page - slots were %s' % slots))
 
         # Always output script and base data structure
         buf.write(u'<script type="text/javascript">\n')
@@ -155,8 +151,8 @@ class AdBlock(template.Node):
             slot = pos.slot.label
             breakpoint = pos.breakpoint
             ad_unit_id = pos.slot.ad_unit_id
-            div_id = context[ADS][slot][breakpoint]
-            sizes = u'[%s]' % (u','.join([u'[%d,%d]' % (s.width, s.height) for s in pos.sizes]))
+            div_id = context.render_context[ADS][slot][breakpoint]
+            sizes = u'[%s]' % (u','.join([u'[%d,%d]' % (s.width, s.height) for s in pos.sizes.all()]))
 
             buf.write(
                 AdBlock.POSITION_TPL.format(

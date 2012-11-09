@@ -69,7 +69,7 @@ class AdNode(template.Node):
 
     def render(self, context):
         if FIRED in context and context[FIRED]:
-            return error('adgeletti_go has already been fired.')
+            return error(u'`adgeletti_go` has already been fired.')
 
         if ADS not in context:
             context[ADS] = {}
@@ -99,7 +99,7 @@ class AdNode(template.Node):
         return content
 
 
-@register.tag(name="adgeletti_go")
+@register.tag(name='adgeletti_go')
 def parse_adgeletti_go(parser, token):
     """Parser for adgeletti_go tag. Usage:
         {% adgeletti_go %}
@@ -123,7 +123,7 @@ class AdBlock(template.Node):
             return u''
 
         if context[FIRED]:
-            return error(u'adgeletti_go has already been fired.')
+            return error(u'`adgeletti_go` has already been fired.')
         else:
             context[FIRED] = True
 

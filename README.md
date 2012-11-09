@@ -45,7 +45,7 @@ If the same ad unit should display in two different locations for two different 
 
 Finally, at the bottom of the page, another tag outputs the javascript necessary to facilitate displaying the ads:
 
-    {% adgeletti_init %}
+    {% adgeletti_go %}
 
 Integration
 -----------

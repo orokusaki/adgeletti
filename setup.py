@@ -8,12 +8,13 @@ version = '.'.join([str(v) for v in version_tuple])
 
 setup(
     name = 'adgeletti',
-    description = """A truely plugable Django app, providing easy integration
-    of Google DFP responsive-ready ad displaying into your website.""",
+    description = ('A truely plugable Django app, providing easy integration '
+                   'of Google GPT ad displaying into your website.'),
     version = version,
     author = 'Jeff.Ober and Michael.Angeletti @ CMG Digital [dot] com',
     url = 'http://github.com/orokusaki/adgeletti/',
     packages=['adgeletti'],
+    package_data={'adgeletti': ['static/adgeletti/*', 'templatetags/*.py']},
     classifiers = [
         'Environment :: Web Environment',
         'Framework :: Django',

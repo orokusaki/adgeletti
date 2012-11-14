@@ -58,9 +58,17 @@ Integration is simple. Call the `Adgeletti.display` function, providing the brea
     // lucky charms are in order before an ad is displayed.
     Adgeletti.display('Mobile');
 
+    // Once ads are displayed for a given breakpoint, they can also be hidden,
+    // and redisplayed without triggering a new ad impression. Also worth
+    // noting is that ad impressions don't occur for ads in a given breakpoint
+    // until that breakpoint is displayed using the aforementioned function.
+    // To hide ads for a breakpoint and display ads for another, simply use:
+    Adgeletti.hide('Mobile');
+    Adgeletti.display('Desktop');
+
 Dependencies
 ------------
 
 1.  Django 1.3
-2.  `contrib.sites`
+2.  `django.contrib.sites`
 3.  The Google GPT script (e.g. //www.googletagservices.com/tag/js/gpt.js)

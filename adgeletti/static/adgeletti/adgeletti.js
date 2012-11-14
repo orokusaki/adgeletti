@@ -13,7 +13,8 @@ window.Adgeletti = {
 		// A dictionary of ad positions that are showing, keyed by their
 		// respective breakpoints
 		showing: {},
-		// A dictionary of ad positions that have been displayed
+		// A dictionary of ad positions that have been displayed, keyed by
+		// their respective breakpoints
 		displayed: {}
 	},
 

@@ -111,12 +111,12 @@ class AdBlock(template.Node):
     """Emits a <script type="text/javascript"> tag with code similar to the
     following example, as a means to define an ad position.
 
-        Adgeletti.position("Mobile", "AD-UNIT-ID-1", "DIV-ID-1", [[320,50]]);
+        Adgeletti.position('{"breakpoint": "Mobile", "ad_unit_id": "AD-UNIT-ID-1", "div_id": "DIV-ID-1", "sizes": [[320,50]]}');
 
     ...where sizes is an array of [width, height] pairs (arrays).
     """
     # Template for ad definition
-    POSITION_TPL = u'Adgeletti.position("{b}", "{a}", {s}, "{d}");'
+    POSITION_TPL = u'Adgeletti.position(\'%s\');'
 
     def render(self, context):
         if ADS not in context.render_context or FIRED not in context.render_context:
@@ -146,22 +146,17 @@ class AdBlock(template.Node):
         buf.write(u'<script type="text/javascript">\n')
 
         # Loop through each ``AdPosition`` and emit an `Adgeletti.position`
-        # call for each
+        # call for each, providing the data as JSON
         for pos in positions:
-            slot = pos.slot.label
-            breakpoint = pos.breakpoint
-            ad_unit_id = pos.slot.ad_unit_id
-            div_id = context.render_context[ADS][slot][breakpoint]
-            sizes = u'[%s]' % (u','.join([u'[%d,%d]' % (s.width, s.height) for s in pos.sizes.all()]))
-
-            buf.write(
-                AdBlock.POSITION_TPL.format(
-                    b=breakpoint,
-                    a=ad_unit_id,
-                    s=sizes,
-                    d=div_id,
-                )
-            )
+            _position_data = {
+                'breakpoint': pos.breakpoint,
+                'ad_unit_id': pos.slot.ad_unit_id,
+                'sizes': [
+                    [size.width, size.height] for size in pos.sizes.all()
+                ],
+                'div_id': context.render_context[ADS][slot][breakpoint],
+            }
+            buf.write(AdBlock.POSITION_TPL % (json.dumps(_position_data),))
 
             buf.write(u'\n')
 

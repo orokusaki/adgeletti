@@ -71,4 +71,5 @@ Dependencies
 
 1.  Django 1.3
 2.  `django.contrib.sites`
-3.  The Google GPT script (e.g. //www.googletagservices.com/tag/js/gpt.js)
+3.  JSON support (see [json2.js](https://github.com/douglascrockford/JSON-js "JSON"))
+4.  The Google GPT script (e.g. //www.googletagservices.com/tag/js/gpt.js)

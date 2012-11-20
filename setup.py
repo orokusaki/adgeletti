@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-from distutils.core import setup
+#from distutils.core import setup
+from setuptools import setup, find_packages
 
 
 # Dynamically calculate the version based on adgeletti.VERSION
@@ -13,8 +14,6 @@ setup(
     version = version,
     author = 'Jeff.Ober and Michael.Angeletti @ CMG Digital [dot] com',
     url = 'http://github.com/orokusaki/adgeletti/',
-    packages=['adgeletti'],
-    package_data={'adgeletti': ['static/adgeletti/*', 'templatetags/*.py']},
     classifiers = [
         'Environment :: Web Environment',
         'Framework :: Django',
@@ -24,4 +23,5 @@ setup(
         'Programming Language :: Python',
         'Topic :: Utilities'
     ],
+    packages=find_packages(),
 )

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-#from distutils.core import setup
 from setuptools import setup, find_packages
 
 
@@ -12,7 +11,8 @@ setup(
     description = ('A truely plugable Django app, providing easy integration '
                    'of Google GPT ad displaying into your website.'),
     version = version,
-    author = 'Jeff.Ober and Michael.Angeletti @ CMG Digital [dot] com',
+    author = 'Jeff Ober and Michael Angeletti',
+    author_email = 'Jeff.Ober and Michael.Angeletti @ CMG Digital [dot] com',
     url = 'http://github.com/orokusaki/adgeletti/',
     classifiers = [
         'Environment :: Web Environment',

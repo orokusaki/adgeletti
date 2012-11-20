@@ -151,11 +151,11 @@ class AdBlock(template.Node):
         for pos in positions:
             _position_data = {
                 'breakpoint': pos.breakpoint,
-                'ad_unit_id': pos.slot.ad_unit_id,
+                'ad_unit_id': pos.slot.ad_unit_id(),
                 'sizes': [
                     [size.width, size.height] for size in pos.sizes.all()
                 ],
-                'div_id': context.render_context[ADS][slot][breakpoint],
+                'div_id': context.render_context[ADS][pos.slot.label][pos.breakpoint],
             }
             buf.write(AdBlock.POSITION_TPL % (json.dumps(_position_data),))
 

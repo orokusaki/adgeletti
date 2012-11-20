@@ -29,9 +29,8 @@ class AdSlot(models.Model):
         unique_together = ('label', 'site')
 
     def __unicode__(self):
-        return _(u'%s (%s)') % (self.label, self.site)
+        return _(u'%s (%s)') % (self.label, self.site.name)
 
-    @property
     def ad_unit_id(self):
         return u'%s/%s' % (settings.ADGELETTI_DFP_NETWORK_ID, self.ad_unit)
 

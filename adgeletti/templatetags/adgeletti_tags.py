@@ -124,7 +124,7 @@ class AdBlock(template.Node):
             return error(u'{% adgeletti_go %} was run without an {% ad ... %}')
 
         if context.render_context[FIRED]:
-            return error(u'{% adgeletti_go %} already used, but used again')
+            return error(u'{% adgeletti_go %} called more than once')
         else:
             context.render_context[FIRED] = True
 
@@ -141,7 +141,7 @@ class AdBlock(template.Node):
         )
 
         if slots and not positions:
-            buf.write(error(u'No ad positions exist for the slots in the page - slots were %s' % slots))
+            return error(u'No ad positions exist for the slots in the page (slots: %s)' % slots)
 
         # Always output script and base data structure
         buf.write(u'<script type="text/javascript">\n')
@@ -152,13 +152,10 @@ class AdBlock(template.Node):
             _position_data = {
                 'breakpoint': pos.breakpoint,
                 'ad_unit_id': pos.slot.ad_unit_id(),
-                'sizes': [
-                    [size.width, size.height] for size in pos.sizes.all()
-                ],
+                'sizes': [[size.width, size.height] for size in pos.sizes.all()],
                 'div_id': context.render_context[ADS][pos.slot.label][pos.breakpoint],
             }
             buf.write(AdBlock.POSITION_TPL % (json.dumps(_position_data),))
-
             buf.write(u'\n')
 
         buf.write(u'</script>\n')
